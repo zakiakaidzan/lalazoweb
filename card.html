@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ID Card Generator</title>
+    <!-- Menggunakan Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Pustaka untuk menyimpan div sebagai gambar -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        /* Menggunakan font Arial Nova untuk keseluruhan halaman */
+        body {
+            font-family: 'Arial Nova', Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-weight: 700;
+            background-color: #f8f9fa;
+        }
+
+        /* --- UI/UX Enhancements --- */
+        .header {
+            background-color: white;
+            padding: 1rem 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .main-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 2rem;
+        }
+
+        .card-preview-section, .form-section {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* Layout responsif untuk mobile */
+        @media (max-width: 992px) {
+            .main-content {
+                flex-direction: column;
+            }
+        }
+        
+        .form-container {
+             background-color: white;
+             padding: 2rem;
+             border-radius: 0.75rem;
+             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .btn-primary {
+            transition: all 0.2s ease-in-out;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 123, 255, 0.2);
+        }
+
+        /* --- Card Specific Styles --- */
+        .card-container {
+            width: 100%;
+            max-width: 512px; /* Batas maksimum agar tidak terlalu besar di desktop */
+            aspect-ratio: 85.6 / 54;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .student-photo {
+            object-fit: cover;
+            object-position: center;
+            border-color: #004282 !important;
+        }
+        
+        /* Ukuran font responsif manual */
+        .fs-custom-small { font-size: calc(0.5vw + 6px); }
+        .fs-custom-body { font-size: calc(0.5vw + 7px); }
+        .fs-custom-title { font-size: calc(1vw + 12px); }
+
+        .form-control {
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header shadow-sm">
+        <div class="container d-flex justify-content-between align-items-center">
+            <h4 class="mb-0 fw-bold" style="color: #003366;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-vcard-fill me-2" viewBox="0 0 16 16">
+                  <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm9 1.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-4a.5.5 0 0 0-.5.5M9 8a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-4A.5.5 0 0 0 9 8m1 2.5a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 0-1h-3a.5.5 0 0 0-.5.5m-1 2a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 0-1h-4a.5.5 0 0 0-.5.5M3 4.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3"/>
+                  <path d="M3 8.5c0 .828.448 1.53 1.108 2.022.673.492 1.557.734 2.632.734.686 0 1.25-.163 1.696-.36.446-.197.687-.457.687-.752 0-.363-.239-.622-.631-.814-.392-.192-.982-.38-1.758-.517a2.2 2.2 0 0 0-1.03-.135c-.452.02-.904.08-.984.11a.64.64 0 0 0-.442.22c-.139.133-.203.318-.203.514z"/>
+                </svg>
+                ID Card Generator
+            </h4>
+            <span class="badge bg-primary rounded-pill">v1.0</span>
+        </div>
+    </header>
+
+    <div class="container py-5">
+        <div class="main-content">
+            <!-- Kolom Pratinjau Kartu -->
+            <div class="card-preview-section">
+                 <div id="id-card-container" class="bg-white rounded-4 shadow-lg overflow-hidden position-relative card-container" 
+                     style="background-image: url('https://i.ibb.co/hxFRBShd/Biru-dan-Kuning-Modern-Kartu-Identitas-Mahasiswa-Id-Card-1.png'); background-size: 100% 100%; background-repeat: no-repeat;">
+                    <div class="position-relative w-100 h-100">
+                        <!-- Foto Mahasiswa -->
+                        <div class="position-absolute" style="top: 30%; left: 6%; width: 28%; height: 52%;">
+                            <img id="display-photo" src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?q=80&w=1160&auto.format&fit=crop" alt="Foto Mahasiswa" class="w-100 h-100 rounded border border-4 shadow-lg student-photo">
+                        </div>
+                        <p class="position-absolute  text-dark fw-semibold fs-custom-small" style="bottom: 2%; left: 6%;">BERLAKU S/D JUNI 2029</p>
+                        <div class="position-absolute fw-bold fs-custom-title" style="top: 28%; left: 40%; color: #003366;">KARTU MAHASISWA</div>
+                        <!-- Labels -->
+                        <div class="position-absolute text-dark fw-bold fs-custom-body" style="top: 45.5%; left: 40%;">NAMA</div>
+                        <div class="position-absolute text-dark fw-bold fs-custom-body" style="top: 53.5%; left: 40%;">ID</div>
+                        <div class="position-absolute text-dark fw-bold fs-custom-body" style="top: 61.5%; left: 40%;">T.T.L</div>
+                        <div class="position-absolute text-dark fw-bold fs-custom-body" style="top: 69.5%; left: 40%;">ALAMAT</div>
+                        <!-- Pemisah -->
+                        <div class="position-absolute text-dark fw-bold fs-custom-body" style="top: 45.5%; left: 53%;">:</div>
+                        <div class="position-absolute text-dark fw-bold fs-custom-body" style="top: 53.5%; left: 53%;">:</div>
+                        <div class="position-absolute text-dark fw-bold fs-custom-body" style="top: 61.5%; left: 53%;">:</div>
+                        <div class="position-absolute text-dark fw-bold fs-custom-body" style="top: 69.5%; left: 53%;">:</div>
+                        <!-- Data Dinamis Mahasiswa -->
+                        <div id="display-nama" class="position-absolute text-dark fw-bold fs-custom-body" style="top: 45.5%; left: 55%; right: 5%;">AHMAD SYAFI'I</div>
+                        <div id="display-id" class="position-absolute text-dark fw-bold fs-custom-body" style="top: 53.5%; left: 55%; right: 5%;">1234567890</div>
+                        <div id="display-ttl" class="position-absolute text-dark fw-bold fs-custom-body" style="top: 61.5%; left: 55%; right: 5%;">SERANG, 12-03-2004</div>
+                        <div id="display-alamat" class="position-absolute text-dark fw-bold fs-custom-body" style="top: 69.5%; left: 55%; right: 5%;">JALAN RADEN SALEH RAYA NO.10 SERANG</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Kolom Form Input -->
+            <div class="form-section">
+                <div class="form-container">
+                    <h5 class="mb-4">Ubah Data Kartu</h5>
+                    <div class="mb-3">
+                        <label for="input-photo" class="form-label">Ubah Foto</label>
+                        <input class="form-control" type="file" id="input-photo" accept="image/*">
+                    </div>
+                    <div class="mb-3">
+                        <label for="input-nama" class="form-label">Nama</label>
+                        <input type="text" class="form-control" id="input-nama" value="AHMAD SYAFI'I">
+                    </div>
+                    <div class="mb-3">
+                        <label for="input-id" class="form-label">ID</label>
+                        <input type="text" class="form-control" id="input-id" value="1234567890">
+                    </div>
+                     <div class="mb-3">
+                        <label for="input-ttl" class="form-label">Tempat, Tanggal Lahir</label>
+                        <input type="text" class="form-control" id="input-ttl" value="SERANG, 12-03-2004">
+                    </div>
+                     <div class="mb-3">
+                        <label for="input-alamat" class="form-label">Alamat</label>
+                        <input type="text" class="form-control" id="input-alamat" value="JALAN RADEN SALEH RAYA NO.10 SERANG">
+                    </div>
+                    <button id="download-btn" class="btn btn-primary w-100 mt-3 py-2 fw-bold">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download me-2" viewBox="0 0 16 16">
+                          <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                          <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                        </svg>
+                        Download ID Card
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Menghubungkan elemen input dengan elemen display pada kartu
+        const inputNama = document.getElementById('input-nama');
+        const displayNama = document.getElementById('display-nama');
+        const inputId = document.getElementById('input-id');
+        const displayId = document.getElementById('display-id');
+        const inputTtl = document.getElementById('input-ttl');
+        const displayTtl = document.getElementById('display-ttl');
+        const inputAlamat = document.getElementById('input-alamat');
+        const displayAlamat = document.getElementById('display-alamat');
+        const inputPhoto = document.getElementById('input-photo');
+        const displayPhoto = document.getElementById('display-photo');
+        const downloadBtn = document.getElementById('download-btn');
+        const cardContainer = document.getElementById('id-card-container');
+
+        // Fungsi untuk mengubah teks pada kartu dan memastikan huruf besar
+        const updateText = (inputElement, displayElement) => {
+            const upperCaseValue = inputElement.value.toUpperCase();
+            displayElement.textContent = upperCaseValue;
+            if(inputElement.value !== upperCaseValue) {
+                inputElement.value = upperCaseValue;
+            }
+        };
+
+        // Event listener untuk mengubah teks secara real-time
+        inputNama.addEventListener('input', () => updateText(inputNama, displayNama));
+        inputId.addEventListener('input', () => updateText(inputId, displayId));
+        inputTtl.addEventListener('input', () => updateText(inputTtl, displayTtl));
+        inputAlamat.addEventListener('input', () => updateText(inputAlamat, displayAlamat));
+
+        // Event listener untuk mengubah foto
+        inputPhoto.addEventListener('change', (event) => {
+            if (event.target.files && event.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    displayPhoto.src = e.target.result;
+                }
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        });
+
+        // Event listener untuk tombol download
+        downloadBtn.addEventListener('click', () => {
+            html2canvas(cardContainer, {
+                useCORS: true,
+                scale: 5
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'kartu-mahasiswa.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        });
+    </script>
+</body>
+</html>
+
