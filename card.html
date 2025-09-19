@@ -73,10 +73,10 @@
             border-color: #004282 !important;
         }
         
-        /* Ukuran font responsif manual */
-        .fs-custom-small { font-size: calc(0.5vw + 6px); }
-        .fs-custom-body { font-size: calc(0.5vw + 7px); }
-        .fs-custom-title { font-size: calc(1vw + 12px); }
+        /* Ukuran font responsif dengan ukuran minimum agar tidak hilang di mobile */
+        .fs-custom-small { font-size: clamp(7px, calc(0.5vw + 6px), 12px); }
+        .fs-custom-body { font-size: clamp(8px, calc(0.5vw + 7px), 13px); }
+        .fs-custom-title { font-size: clamp(14px, calc(1vw + 12px), 24px); }
 
         .form-control {
             text-transform: uppercase;
@@ -110,7 +110,7 @@
                         <div class="position-absolute" style="top: 30%; left: 6%; width: 28%; height: 52%;">
                             <img id="display-photo" src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?q=80&w=1160&auto.format&fit=crop" alt="Foto Mahasiswa" class="w-100 h-100 rounded border border-4 shadow-lg student-photo">
                         </div>
-                        <p class="position-absolute  text-dark fw-semibold fs-custom-small" style="bottom: 2%; left: 6%;">BERLAKU S/D JUNI 2029</p>
+                        <p class="position-absolute text-dark fw-semibold fs-custom-small" style="bottom: 2%; left: 6%;">BERLAKU S/D JUNI 2029</p>
                         <div class="position-absolute fw-bold fs-custom-title" style="top: 28%; left: 40%; color: #003366;">KARTU MAHASISWA</div>
                         <!-- Labels -->
                         <div class="position-absolute text-dark fw-bold fs-custom-body" style="top: 45.5%; left: 40%;">NAMA</div>
