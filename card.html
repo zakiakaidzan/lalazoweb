@@ -41,6 +41,14 @@
             .main-content {
                 flex-direction: column;
             }
+            /* Penyesuaian agar kartu tetap tampil di mobile */
+            .card-preview-section, .form-section {
+                flex: none; /* Hentikan elemen agar tidak memuai secara vertikal */
+                width: 100%; /* Paksa lebar menjadi 100% */
+            }
+            .card-preview-section {
+                margin-bottom: 2rem; /* Tambah jarak antara kartu dan form */
+            }
         }
         
         .form-container {
@@ -222,4 +230,6 @@
     </script>
 </body>
 </html>
+
+
 
